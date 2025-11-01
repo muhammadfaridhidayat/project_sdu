@@ -42,7 +42,8 @@ func (s *userService) Login(user model.User) (token *string, dbUser model.User, 
 	// 	return nil, 0, errors.New("wrong email or password")
 	// }
 
-	expirationTime := time.Now().Add(10 * time.Minute)
+	// expirationTime := time.Now().Add(10 * time.Minute)
+	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := model.Claims{
 		UserID: dbUser.ID,
 		StandardClaims: jwt.StandardClaims{
