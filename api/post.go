@@ -6,6 +6,7 @@ import (
 	"project_sdu/model"
 	"project_sdu/service"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,7 +28,27 @@ func NewPostAPI(postService service.PostService) *postAPI {
 }
 
 func (api *postAPI) GetPosts(c *gin.Context) {
-	posts, err := api.postService.FindAll()
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil || page <= 0 {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Success: false,
+			Status:  http.StatusBadRequest,
+			Message: "Invalid page number. Please provide a positive integer.",
+		})
+		return
+	}
+
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil || limit <= 0 {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Success: false,
+			Status:  http.StatusBadRequest,
+			Message: "Invalid limit value. Please provide a positive integer.",
+		})
+		return
+	}
+
+	posts, err := api.postService.FindAll(page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Success: false,
@@ -41,7 +62,11 @@ func (api *postAPI) GetPosts(c *gin.Context) {
 		Success: true,
 		Status:  http.StatusOK,
 		Message: "Posts retrieved successfully",
-		Data:    posts,
+		Data: posts,
+		Meta: gin.H{
+			"page":  page,
+			"limit": limit,
+		},
 	})
 }
 
