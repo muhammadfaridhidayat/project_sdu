@@ -52,13 +52,24 @@ func (api *postAPI) CreatePost(c *gin.Context) {
 		var ve validator.ValidationErrors
 		if errors.As(err, &ve) {
 			errorMessages := make(map[string]string)
+			customErrorMessages := map[string]string{
+				"required": "This field is required",
+				"min":      "This field is too short",
+				"oneof":    "Invalid value for this field",
+			}
 			for _, e := range ve {
-				errorMessages[e.Field()] = e.ActualTag()
+				fieldName := e.Field()
+				tag := e.ActualTag()
+				if customMessage, ok := customErrorMessages[tag]; ok {
+					errorMessages[fieldName] = customMessage
+				} else {
+					errorMessages[fieldName] = tag
+				}
 			}
 			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Success: false,
 				Status:  http.StatusBadRequest,
-				Message: "Validation failed",
+				Message: "Input validation failed",
 				Errors:  errorMessages,
 			})
 			return
@@ -66,7 +77,7 @@ func (api *postAPI) CreatePost(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Success: false,
 			Status:  http.StatusBadRequest,
-			Message: "Invalid request body",
+			Message: "The request body is invalid",
 			Errors:  map[string]string{"error": err.Error()},
 		})
 		return
@@ -94,7 +105,7 @@ func (api *postAPI) CreatePost(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, model.ErrorResponse{
 					Success: false,
 					Status:  http.StatusBadRequest,
-					Message: "Invalid publishedAt format",
+					Message: "The published date format is invalid. Please use YYYY-MM-DDTHH:MM.",
 					Errors:  map[string]string{"publishedAt": err.Error()},
 				})
 				return
@@ -113,7 +124,7 @@ func (api *postAPI) CreatePost(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Success: false,
 			Status:  http.StatusInternalServerError,
-			Message: "Failed to create post",
+			Message: "Failed to create the post due to an internal error",
 		})
 		return
 	}
