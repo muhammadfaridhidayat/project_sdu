@@ -7,6 +7,7 @@ import (
 
 type PostService interface {
 	CreatePost(post *model.Post) error
+	FindAll() ([]model.Post, error)
 }
 
 type postService struct {
@@ -19,4 +20,8 @@ func NewPostService(postRepository repository.PostRepository) *postService {
 
 func (s *postService) CreatePost(post *model.Post) error {
 	return s.postRepository.Store(post)
+}
+
+func (s *postService) FindAll() ([]model.Post, error) {
+	return s.postRepository.FindAll()
 }

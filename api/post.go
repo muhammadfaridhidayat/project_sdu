@@ -15,6 +15,7 @@ import (
 
 type PostAPI interface {
 	CreatePost(c *gin.Context)
+	GetPosts(c *gin.Context)
 }
 
 type postAPI struct {
@@ -23,6 +24,25 @@ type postAPI struct {
 
 func NewPostAPI(postService service.PostService) *postAPI {
 	return &postAPI{postService}
+}
+
+func (api *postAPI) GetPosts(c *gin.Context) {
+	posts, err := api.postService.FindAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Success: false,
+			Status:  http.StatusInternalServerError,
+			Message: "Failed to retrieve posts due to an internal error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.SuccessResponse{
+		Success: true,
+		Status:  http.StatusOK,
+		Message: "Posts retrieved successfully",
+		Data:    posts,
+	})
 }
 
 type PostRequest struct {

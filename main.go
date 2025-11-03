@@ -177,6 +177,7 @@ func RunServer(r *gin.Engine, conn interface{}) *gin.Engine {
 	{
 		posts.Use(middleware.Auth())
 		posts.POST("", apiHandler.PostAPIHandler.CreatePost)
+		posts.GET("", apiHandler.PostAPIHandler.GetPosts)
 	}
 
 	return r
