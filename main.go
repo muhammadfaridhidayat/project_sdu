@@ -185,12 +185,17 @@ func RunServer(r *gin.Engine, conn interface{}) *gin.Engine {
 		students.GET("/class", apiHandler.StudentAPIHandler.FetchStudentWithClass)
 	}
 
-	// Post routes
-	posts := r.Group("/posts")
+	// Public Post routes
+	publicPosts := r.Group("/posts")
 	{
-		posts.Use(middleware.Auth())
-		posts.POST("", apiHandler.PostAPIHandler.CreatePost)
-		posts.GET("", apiHandler.PostAPIHandler.GetPosts)
+		publicPosts.GET("", apiHandler.PostAPIHandler.GetPosts)
+	}
+
+	// Authenticated Post routes
+	authenticatedPosts := r.Group("/posts")
+	{
+		authenticatedPosts.Use(middleware.Auth())
+		authenticatedPosts.POST("", apiHandler.PostAPIHandler.CreatePost)
 	}
 
 	return r

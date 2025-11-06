@@ -7,7 +7,7 @@ import (
 
 type PostService interface {
 	CreatePost(post *model.Post) error
-	FindAll(page, limit int) ([]model.Post, error)
+	FindAll(page, limit int, q string) ([]model.Post, error)
 }
 
 type postService struct {
@@ -22,6 +22,6 @@ func (s *postService) CreatePost(post *model.Post) error {
 	return s.postRepository.Store(post)
 }
 
-func (s *postService) FindAll(page, limit int) ([]model.Post, error) {
-	return s.postRepository.FindAll(page, limit)
+func (s *postService) FindAll(page, limit int, q string) ([]model.Post, error) {
+	return s.postRepository.FindAll(page, limit, q)
 }

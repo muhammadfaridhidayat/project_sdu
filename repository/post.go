@@ -8,7 +8,7 @@ import (
 
 type PostRepository interface {
 	Store(post *model.Post) error
-	FindAll(page, limit int) ([]model.Post, error)
+	FindAll(page, limit int, q string) ([]model.Post, error)
 }
 
 type postRepository struct {
@@ -23,9 +23,15 @@ func (r *postRepository) Store(post *model.Post) error {
 	return r.db.Create(post).Error
 }
 
-func (r *postRepository) FindAll(page, limit int) ([]model.Post, error) {
+func (r *postRepository) FindAll(page, limit int, q string) ([]model.Post, error) {
 	var posts []model.Post
 	offset := (page - 1) * limit
-	err := r.db.Order("created_at DESC").Limit(limit).Offset(offset).Find(&posts).Error
+	query := r.db.Order("created_at DESC").Limit(limit).Offset(offset)
+
+	if q != "" {
+		query = query.Where("title ILIKE ?", "%"+q+"%")
+	}
+
+	err := query.Find(&posts).Error
 	return posts, err
 }

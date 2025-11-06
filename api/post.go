@@ -48,7 +48,9 @@ func (api *postAPI) GetPosts(c *gin.Context) {
 		return
 	}
 
-	posts, err := api.postService.FindAll(page, limit)
+	q := c.Query("q")
+
+	posts, err := api.postService.FindAll(page, limit, q)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Success: false,
