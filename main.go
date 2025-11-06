@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"project_sdu/api"
@@ -48,8 +49,20 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// --- CORS SETUP HERE ---
+	allowedOrigins := []string{"http://localhost:3000"}
+
+	envOrigins := os.Getenv("CORS_ALLOWED_ORIGINS")
+	if envOrigins != "" {
+		for _, origin := range strings.Split(envOrigins, ",") {
+			o := strings.TrimSpace(origin)
+			if o != "" {
+				allowedOrigins = append(allowedOrigins, o)
+			}
+		}
+	}
+
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{os.Getenv("CORS_ALLOWED_ORIGINS")},
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
