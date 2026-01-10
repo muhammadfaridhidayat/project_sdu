@@ -296,6 +296,7 @@ type Curriculum struct {
 type Batch struct {
 	ID        int        `gorm:"primaryKey" json:"id"`
 	Name      string     `json:"name"`
+	WhatsappGroupLink *string `json:"whatsapp_group_link"`
 	Jalur     string     `json:"jalur"` // PRESTASI / REGULER
 	IsActive  *bool      `json:"is_active" gorm:"default:false"`
 	StartDate *time.Time `json:"start_date"`
