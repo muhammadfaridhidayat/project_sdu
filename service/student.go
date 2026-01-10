@@ -118,6 +118,8 @@ func (s *studentService) RegisterPPDB(student *model.Student) error {
 		return err
 	}
 
+	student.Batch = activeBatch
+
 	return nil
 }
 
