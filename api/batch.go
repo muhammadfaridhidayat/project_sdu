@@ -5,6 +5,7 @@ import (
 	"project_sdu/model"
 	"project_sdu/service"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,12 +53,12 @@ func (b *batchAPI) Create(c *gin.Context) {
 		return
 	}
 
-	if batch.Year == 0 {
+	if batch.Jalur == "" {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Success: false,
 			Status:  http.StatusBadRequest,
 			Message: "Validation failed",
-			Errors:  map[string]string{"year": "year is required"},
+			Errors:  map[string]string{"jalur": "jalur is required"},
 		})
 		return
 	}
@@ -140,6 +141,15 @@ func (b *batchAPI) Delete(c *gin.Context) {
 	}
 
 	if err := b.batchService.Delete(id); err != nil {
+		if strings.Contains(err.Error(), "violates foreign key constraint") {
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Success: false,
+				Status:  http.StatusBadRequest,
+				Message: "Batch cannot be deleted because it has associated students",
+			})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Success: false,
 			Status:  http.StatusInternalServerError,

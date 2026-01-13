@@ -1,17 +1,13 @@
 package repository
 
 import (
-	"errors"
-	"fmt"
 	"project_sdu/model"
 
 	"gorm.io/gorm"
 )
 
 type BatchRepository interface {
-	GetByYear(year int) (*model.Batch, error)
 	Create(batch *model.Batch) error
-	GetOrCreateByYear(year int) (*model.Batch, error)
 	GetAll(limit, page int, q string) ([]model.Batch, error)
 	GetActiveBatch() (*model.Batch, error)
 	GetByID(id int) (*model.Batch, error)
@@ -28,30 +24,10 @@ func NewBatchRepository(db *gorm.DB) BatchRepository {
 	return &batchRepository{db}
 }
 
-func (r *batchRepository) GetByYear(year int) (*model.Batch, error) {
-	var batch model.Batch
-
-	err := r.db.Where("year = ?", year).First(&batch).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-
-	return &batch, nil
-}
-
 func (r *batchRepository) Create(batch *model.Batch) error {
-	err := r.db.Where("year = ?", batch.Year).First(&batch).Error
-	if err == nil {
-		return errors.New("batch already exist")
-	}
-
-	if err == gorm.ErrRecordNotFound {
-		if err := r.db.Create(batch).Error; err != nil {
-			return err
-		}
+	// Removed year check as requested
+	if err := r.db.Create(batch).Error; err != nil {
+		return err
 	}
 	return nil
 }
@@ -75,27 +51,6 @@ func (r *batchRepository) GetAll(limit, page int, q string) ([]model.Batch, erro
 		Find(&batches).Error
 
 	return batches, err
-}
-
-func (r *batchRepository) GetOrCreateByYear(year int) (*model.Batch, error) {
-	batch := model.Batch{}
-	err := r.db.Where("year = ?", year).First(&batch).Error
-
-	if err == gorm.ErrRecordNotFound {
-		name := fmt.Sprintf("Tahun Ajaran %d/%d", year, year+1)
-		newBatch := model.Batch{
-			Name: name,
-			Year: year,
-		}
-		if err := r.db.Create(&newBatch).Error; err != nil {
-			return nil, err
-		}
-		return &newBatch, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	return &batch, nil
 }
 
 func (r *batchRepository) GetByID(id int) (*model.Batch, error) {
@@ -146,3 +101,4 @@ func (r *batchRepository) CountAll() (int, error) {
 
 	return int(count), nil
 }
+

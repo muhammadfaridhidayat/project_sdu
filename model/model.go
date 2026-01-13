@@ -296,7 +296,8 @@ type Curriculum struct {
 type Batch struct {
 	ID        int        `gorm:"primaryKey" json:"id"`
 	Name      string     `json:"name"`
-	Year      int        `json:"year"`
+	WhatsappGroupLink *string `json:"whatsapp_group_link"`
+	Jalur     string     `json:"jalur"` // PRESTASI / REGULER
 	IsActive  *bool      `json:"is_active" gorm:"default:false"`
 	StartDate *time.Time `json:"start_date"`
 	EndDate   *time.Time `json:"end_date"`
@@ -304,4 +305,25 @@ type Batch struct {
 	UpdatedAt time.Time  `json:"updated_at"`
 
 	Students []Student `json:"students"`
+}
+
+// ======================
+// REQUIREMENT
+// ======================
+type Requirement struct {
+	ID          int       `gorm:"primaryKey" json:"id"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// ======================
+// FAQ
+// ======================
+type Faq struct {
+	ID        int       `gorm:"primaryKey" json:"id"`
+	Question  string    `json:"question"`
+	Answer    string    `json:"answer"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

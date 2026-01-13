@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"project_sdu/model"
 	"project_sdu/repository"
@@ -14,7 +13,6 @@ import (
 type StudentAPI interface {
 	CreateStudent(c *gin.Context)
 	GetStudentByID(c *gin.Context)
-	GetStudentsByBatchYear(c *gin.Context)
 	GetAllStudents(c *gin.Context)
 	UpdateStudent(c *gin.Context)
 	DeleteStudent(c *gin.Context)
@@ -156,45 +154,6 @@ func (s *studentAPI) GetStudentByID(c *gin.Context) {
 		Status:  http.StatusOK,
 		Message: "Student retrieved successfully",
 		Data:    student,
-	})
-}
-
-// ====================
-// GET STUDENT BY BATCH YEAR
-// ====================
-func (s *studentAPI) GetStudentsByBatchYear(c *gin.Context) {
-	yearStr := c.Param("year")
-	limitParam := c.DefaultQuery("limit", "10")
-	pageParam := c.DefaultQuery("page", "1")
-	q := c.Query("q")
-
-	limit, _ := strconv.Atoi(limitParam)
-	page, _ := strconv.Atoi(pageParam)
-	year, err := strconv.Atoi(yearStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Success: false,
-			Status:  http.StatusBadRequest,
-			Message: "Invalid year format",
-		})
-		return
-	}
-
-	students, err := s.studentService.GetStudentsByBatchYear(year, limit, page, q)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
-			Success: false,
-			Status:  http.StatusInternalServerError,
-			Message: "Failed to get students",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, model.SuccessResponse{
-		Success: true,
-		Status:  http.StatusOK,
-		Message: fmt.Sprintf("Students of batch year %d loaded", year),
-		Data:    students,
 	})
 }
 

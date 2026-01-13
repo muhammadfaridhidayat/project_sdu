@@ -185,11 +185,20 @@ func (e *curriculumAPI) GetByID(c *gin.Context) {
 func (e *curriculumAPI) GetAll(c *gin.Context) {
 	limitParam := c.DefaultQuery("limit", "10")
 	pageParam := c.DefaultQuery("page", "1")
+	category := c.Query("category")
 
 	limit, _ := strconv.Atoi(limitParam)
 	page, _ := strconv.Atoi(pageParam)
 
-	data, err := e.curriculumService.GetAll(limit, page)
+	var data []model.Curriculum
+	var err error
+
+	if category != "" {
+		data, err = e.curriculumService.GetByCategory(category, limit, page)
+	} else {
+		data, err = e.curriculumService.GetAll(limit, page)
+	}
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Success: false,
@@ -200,15 +209,21 @@ func (e *curriculumAPI) GetAll(c *gin.Context) {
 		return
 	}
 
+	responseMeta := gin.H{
+		"page":  page,
+		"limit": limit,
+	}
+
+	if category != "" {
+		responseMeta["category"] = category
+	}
+
 	c.JSON(http.StatusOK, model.SuccessResponse{
 		Success: true,
 		Status:  http.StatusOK,
 		Message: "curriculum retrieved successfully",
 		Data:    data,
-		Meta: gin.H{
-			"page":  page,
-			"limit": limit,
-		},
+		Meta:    responseMeta,
 	})
 }
 
