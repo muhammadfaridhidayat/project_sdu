@@ -155,9 +155,10 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// ROUTES //
+	apiV1 := r.Group("/api/v1")
 
 	// User routes
-	user := r.Group("/user")
+	user := apiV1.Group("/user")
 	{
 		user.POST("/register", apiHandler.UserAPIHandler.Register)
 		user.POST("/login", apiHandler.UserAPIHandler.Login)
@@ -168,15 +169,15 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// PPDB routes
-	ppdb := r.Group("/ppdb")
+	ppdb := apiV1.Group("/ppdb")
 	{
 		ppdb.POST("/add", apiHandler.PPDBAPIHandler.Register)
 		ppdb.Use(middleware.Auth())
-		ppdb.GET("/data/:id", apiHandler.PPDBAPIHandler.ExportStudentsByBatch)
+		ppdb.GET("/data-siswa/:id", apiHandler.PPDBAPIHandler.ExportStudentsByBatch)
 	}
 
 	// Student routes
-	student := r.Group("/student")
+	student := apiV1.Group("/student")
 	{
 		student.Use(middleware.Auth())
 		student.POST("/add", apiHandler.StudentAPIHandler.CreateStudent)
@@ -189,7 +190,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// Parent routes
-	parent := r.Group("/parent")
+	parent := apiV1.Group("/parent")
 	{
 		parent.Use(middleware.Auth())
 		parent.POST("/add", apiHandler.ParentAPIHandler.CreateParent)
@@ -200,7 +201,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// Post routes
-	post := r.Group("/post")
+	post := apiV1.Group("/post")
 	{
 		post.GET("/get/:slug", apiHandler.PostAPIHandler.GetPostBySlug)
 		post.GET("/get-all", apiHandler.PostAPIHandler.GetAllPosts)
@@ -212,7 +213,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// Curriculum routes
-	extracurricular := r.Group("/curriculum")
+	extracurricular := apiV1.Group("/curriculum")
 	{
 		extracurricular.GET("/get-all", apiHandler.CurriculumAPIHandler.GetAll)
 		extracurricular.GET("/get/:id", apiHandler.CurriculumAPIHandler.GetByID)
@@ -225,7 +226,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// Facility routes
-	facility := r.Group("/facility")
+	facility := apiV1.Group("/facility")
 	{
 		facility.GET("/get-all", apiHandler.FacilityAPIHandler.GetAllFacilities)
 		facility.GET("/get/:id", apiHandler.FacilityAPIHandler.GetFacilityByID)
@@ -237,7 +238,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// Batch routes
-	batch := r.Group("/batch")
+	batch := apiV1.Group("/batch")
 	{
 		batch.GET("/get-active", apiHandler.BatchAPIHandler.GetActiveBatch)
 		batch.Use(middleware.Auth())
@@ -248,14 +249,14 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 		batch.DELETE("/delete/:id", apiHandler.BatchAPIHandler.Delete)
 	}
 
-	dashboard := r.Group("/dashboard")
+	dashboard := apiV1.Group("/dashboard")
 	{
 		dashboard.Use(middleware.Auth())
 		dashboard.GET("/", apiHandler.DashboardAPIHanlder.GetDashboard)
 	}
 
 	// Requirement routes
-	requirement := r.Group("/requirement")
+	requirement := apiV1.Group("/requirement")
 	{
 		requirement.GET("/get-all", apiHandler.RequirementAPIHandler.GetAll)
 		requirement.GET("/get/:id", apiHandler.RequirementAPIHandler.GetByID)
@@ -267,7 +268,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	}
 
 	// Faq routes
-	faq := r.Group("/faq")
+	faq := apiV1.Group("/faq")
 	{
 		faq.GET("/get-all", apiHandler.FaqAPIHandler.GetAll)
 		faq.GET("/get/:id", apiHandler.FaqAPIHandler.GetByID)
