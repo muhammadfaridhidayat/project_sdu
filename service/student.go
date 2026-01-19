@@ -14,6 +14,7 @@ type StudentService interface {
 	GetAllStudents(limit int, page int, q string, batchID *int, isAccepted *bool) ([]model.Student, error)
 	UpdateStudent(id int, student *model.Student) error
 	DeleteStudent(id int) error
+	GetStudentsByBatchID(batchID int) ([]model.Student, error)
 }
 
 type studentService struct {
@@ -148,4 +149,8 @@ func (s *studentService) DeleteStudent(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (s *studentService) GetStudentsByBatchID(batchID int) ([]model.Student, error) {
+	return s.studentRepo.GetAllByBatchID(batchID)
 }

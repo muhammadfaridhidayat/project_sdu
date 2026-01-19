@@ -23,17 +23,17 @@ import (
 )
 
 type APIHandler struct {
-	UserAPIHandler       api.UserAPI
-	StudentAPIHandler    api.StudentAPI
-	ParentAPIHandler     api.ParentAPI
-	PostAPIHandler       api.PostAPI
-	CurriculumAPIHandler api.CurriculumAPI
-	FacilityAPIHandler   api.FacilityAPI
-	BatchAPIHandler      api.BatchAPI
-	DashboardAPIHanlder  api.DashboardAPI
-	PPDBAPIHandler       api.PPDBAPI
+	UserAPIHandler        api.UserAPI
+	StudentAPIHandler     api.StudentAPI
+	ParentAPIHandler      api.ParentAPI
+	PostAPIHandler        api.PostAPI
+	CurriculumAPIHandler  api.CurriculumAPI
+	FacilityAPIHandler    api.FacilityAPI
+	BatchAPIHandler       api.BatchAPI
+	DashboardAPIHanlder   api.DashboardAPI
+	PPDBAPIHandler        api.PPDBAPI
 	RequirementAPIHandler api.RequirementAPI
-	FaqAPIHandler        api.FaqAPI
+	FaqAPIHandler         api.FaqAPI
 }
 
 func main() {
@@ -83,7 +83,7 @@ func main() {
 	conn.AutoMigrate(
 		&model.User{}, &model.Student{}, &model.Parent{}, &model.Post{}, &model.Curriculum{}, &model.Facility{}, &model.Batch{}, &model.Requirement{}, &model.Faq{},
 	)
-	
+
 	// Seed
 	SeedRequirements(conn)
 	SeedFaqs(conn)
@@ -141,17 +141,17 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	faqAPIHandler := api.NewFaqAPI(faqService)
 
 	apiHandler := APIHandler{
-		UserAPIHandler:       userAPIHandler,
-		StudentAPIHandler:    studentAPIHandler,
-		ParentAPIHandler:     parentAPIHandler,
-		PostAPIHandler:       postAPIHandler,
-		CurriculumAPIHandler: curriculumAPIHandler,
-		FacilityAPIHandler:   facilityAPIHandler,
-		BatchAPIHandler:      batchAPIHandler,
-		DashboardAPIHanlder:  dashboardAPIHanlder,
-		PPDBAPIHandler:       ppdbAPIHandler,
+		UserAPIHandler:        userAPIHandler,
+		StudentAPIHandler:     studentAPIHandler,
+		ParentAPIHandler:      parentAPIHandler,
+		PostAPIHandler:        postAPIHandler,
+		CurriculumAPIHandler:  curriculumAPIHandler,
+		FacilityAPIHandler:    facilityAPIHandler,
+		BatchAPIHandler:       batchAPIHandler,
+		DashboardAPIHanlder:   dashboardAPIHanlder,
+		PPDBAPIHandler:        ppdbAPIHandler,
 		RequirementAPIHandler: requirementAPIHandler,
-		FaqAPIHandler:        faqAPIHandler,
+		FaqAPIHandler:         faqAPIHandler,
 	}
 
 	// ROUTES //
@@ -171,6 +171,8 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	ppdb := r.Group("/ppdb")
 	{
 		ppdb.POST("/add", apiHandler.PPDBAPIHandler.Register)
+		ppdb.Use(middleware.Auth())
+		ppdb.GET("/data/:id", apiHandler.PPDBAPIHandler.ExportStudentsByBatch)
 	}
 
 	// Student routes
@@ -183,8 +185,6 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 		student.GET("/get-all", apiHandler.StudentAPIHandler.GetAllStudents)
 		student.PUT("/update/:id", apiHandler.StudentAPIHandler.UpdateStudent)
 		student.DELETE("/delete/:id", apiHandler.StudentAPIHandler.DeleteStudent)
-
-
 
 	}
 

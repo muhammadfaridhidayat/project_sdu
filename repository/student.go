@@ -22,6 +22,7 @@ type StudentRepository interface {
 	Delete(id int) error
 	CountAll() (int, error)
 	CountByBatchID(batchID int) (int, error)
+	GetAllByBatchID(batchID int) ([]model.Student, error)
 }
 
 type studentRepository struct {
@@ -160,4 +161,17 @@ func (r *studentRepository) CountByBatchID(batchID int) (int, error) {
 		Where("batch_id = ?", batchID).
 		Count(&count).Error
 	return int(count), err
+}
+
+func (r *studentRepository) GetAllByBatchID(batchID int) ([]model.Student, error) {
+	var students []model.Student
+
+	err := r.db.
+		Where("batch_id = ?", batchID).
+		Preload("Parent").
+		Preload("Batch").
+		Order("full_name ASC").
+		Find(&students).Error
+
+	return students, err
 }
