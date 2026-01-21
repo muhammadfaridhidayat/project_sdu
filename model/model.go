@@ -214,6 +214,7 @@ type Student struct {
 	KartuKeluarga         *string         `json:"kartu_keluarga"`
 	AktaKelahiran         *string         `json:"akta_kelahiran"`
 	IjazahSKL             *string         `json:"ijazah_skl"`
+	Prestasi              *string         `json:"prestasi"`
 	IsAccepted            bool            `json:"is_accepted" gorm:"default:false"`
 
 	BloodType       *BloodType `json:"blood_type"`
@@ -294,15 +295,15 @@ type Curriculum struct {
 // BATCH
 // ======================
 type Batch struct {
-	ID        int        `gorm:"primaryKey" json:"id"`
-	Name      string     `json:"name"`
-	WhatsappGroupLink *string `json:"whatsapp_group_link"`
-	Jalur     string     `json:"jalur"` // PRESTASI / REGULER
-	IsActive  *bool      `json:"is_active" gorm:"default:false"`
-	StartDate *time.Time `json:"start_date"`
-	EndDate   *time.Time `json:"end_date"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	ID                int        `gorm:"primaryKey" json:"id"`
+	Name              string     `json:"name"`
+	WhatsappGroupLink *string    `json:"whatsapp_group_link"`
+	Jalur             string     `json:"jalur"` // PRESTASI / REGULER
+	IsActive          *bool      `json:"is_active" gorm:"default:false"`
+	StartDate         *time.Time `json:"start_date"`
+	EndDate           *time.Time `json:"end_date"`
+	CreatedAt         time.Time  `json:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at"`
 
 	Students []Student `json:"students"`
 }
