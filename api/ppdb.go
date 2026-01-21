@@ -84,7 +84,7 @@ func (p *ppdbAPI) Register(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{ 
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Success: false,
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
@@ -131,6 +131,8 @@ func (p *ppdbAPI) ExportStudentsByBatch(c *gin.Context) {
 		"Alamat", "RT", "RW", "Desa", "Kecamatan", "Kabupaten", "Provinsi", "Kode Pos",
 
 		"No HP", "Email", "Gol. Darah", "Tinggi (cm)", "Berat (kg)", "Riwayat Penyakit",
+
+		"Foto", "Kartu Keluarga", "Akta Kelahiran", "Ijazah / SKL", "Prestasi",
 
 		"Nama Ayah", "Pendidikan Ayah", "Pekerjaan Ayah", "Penghasilan Ayah",
 		"Nama Ibu", "Pendidikan Ibu", "Pekerjaan Ibu", "Penghasilan Ibu",
@@ -181,27 +183,34 @@ func (p *ppdbAPI) ExportStudentsByBatch(c *gin.Context) {
 		f.SetCellValue(sheet, "AC"+row, intv(s.BeratKg))
 		f.SetCellValue(sheet, "AD"+row, str(s.RiwayatPenyakit))
 
+		f.SetCellValue(sheet, "AE"+row, str(s.Photo))
+		f.SetCellValue(sheet, "AF"+row, str(s.KartuKeluarga))
+		f.SetCellValue(sheet, "AG"+row, str(s.AktaKelahiran))
+		f.SetCellValue(sheet, "AH"+row, str(s.IjazahSKL))
+		f.SetCellValue(sheet, "AI"+row, str(s.Prestasi))
+
 		if s.Parent != nil {
-			f.SetCellValue(sheet, "AE"+row, str(s.Parent.FatherName))
-			f.SetCellValue(sheet, "AF"+row, str(s.Parent.FatherEducation))
-			f.SetCellValue(sheet, "AG"+row, str(s.Parent.FatherJob))
-			f.SetCellValue(sheet, "AH"+row, str(s.Parent.FatherIncome))
-			f.SetCellValue(sheet, "AI"+row, str(s.Parent.MotherName))
-			f.SetCellValue(sheet, "AJ"+row, str(s.Parent.MotherEducation))
-			f.SetCellValue(sheet, "AK"+row, str(s.Parent.MotherJob))
-			f.SetCellValue(sheet, "AL"+row, str(s.Parent.MotherIncome))
-			f.SetCellValue(sheet, "AM"+row, str(s.Parent.WaliName))
-			f.SetCellValue(sheet, "AN"+row, str(s.Parent.AlamatOrtuWali))
-			f.SetCellValue(sheet, "AO"+row, str(s.Parent.NoHpOrtuWali))
+			f.SetCellValue(sheet, "AJ"+row, str(s.Parent.FatherName))
+			f.SetCellValue(sheet, "AK"+row, str(s.Parent.FatherEducation))
+			f.SetCellValue(sheet, "AL"+row, str(s.Parent.FatherJob))
+			f.SetCellValue(sheet, "AM"+row, str(s.Parent.FatherIncome))
+			f.SetCellValue(sheet, "AN"+row, str(s.Parent.MotherName))
+			f.SetCellValue(sheet, "AO"+row, str(s.Parent.MotherEducation))
+			f.SetCellValue(sheet, "AP"+row, str(s.Parent.MotherJob))
+			f.SetCellValue(sheet, "AQ"+row, str(s.Parent.MotherIncome))
+			f.SetCellValue(sheet, "AR"+row, str(s.Parent.WaliName))
+			f.SetCellValue(sheet, "AS"+row, str(s.Parent.AlamatOrtuWali))
+			f.SetCellValue(sheet, "AT"+row, str(s.Parent.NoHpOrtuWali))
 		}
 
 		if s.Batch != nil {
-			f.SetCellValue(sheet, "AP"+row, s.Batch.Jalur)
-			f.SetCellValue(sheet, "AQ"+row, s.Batch.Name)
+			f.SetCellValue(sheet, "AU"+row, s.Batch.Jalur)
+			f.SetCellValue(sheet, "AV"+row, s.Batch.Name)
 		}
 
-		f.SetCellValue(sheet, "AR"+row, acceptedText(s.IsAccepted))
-		f.SetCellValue(sheet, "AS"+row, s.CreatedAt.Format("2006-01-02"))
+		f.SetCellValue(sheet, "AW"+row, acceptedText(s.IsAccepted))
+		f.SetCellValue(sheet, "AX"+row, s.CreatedAt.Format("2006-01-02"))
+
 	}
 
 	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")

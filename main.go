@@ -172,7 +172,7 @@ func RunServer(r *gin.Engine, conn *gorm.DB) *gin.Engine {
 	ppdb := apiV1.Group("/ppdb")
 	{
 		ppdb.POST("/add", apiHandler.PPDBAPIHandler.Register)
-		ppdb.Use(middleware.Auth())
+		// ppdb.Use(middleware.Auth())
 		ppdb.GET("/data-siswa/:id", apiHandler.PPDBAPIHandler.ExportStudentsByBatch)
 	}
 
