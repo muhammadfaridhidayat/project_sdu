@@ -84,7 +84,7 @@ func (p *ppdbAPI) Register(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{ // StatusBadRequest often better for business logic errors like "date invalid"
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{ 
 			Success: false,
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
@@ -207,34 +207,6 @@ func (p *ppdbAPI) ExportStudentsByBatch(c *gin.Context) {
 	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	c.Header("Content-Disposition", "attachment; filename=ppdb_batch_"+strconv.Itoa(batchID)+".xlsx")
 	_ = f.Write(c.Writer)
-}
-
-// func str(v *string) string {
-// 	if v != nil {
-// 		return *v
-// 	}
-// 	return ""
-// }
-
-// func intv(v *int) int {
-// 	if v != nil {
-// 		return *v
-// 	}
-// 	return 0
-// }
-
-func boolStr(v bool) string {
-	if v {
-		return "Diterima"
-	}
-	return "Belum Diterima"
-}
-
-func enum(v any) string {
-	if v != nil {
-		return fmt.Sprintf("%v", v)
-	}
-	return ""
 }
 
 func str(v *string) string {
